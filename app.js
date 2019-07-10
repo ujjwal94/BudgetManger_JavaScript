@@ -66,8 +66,18 @@ var budgetController = (function(){
         },
         
         deleteItem: function(type,id){
+            var ids,index;
             
-            // id = 3
+            ids = data.allItems[type].map(function(current){
+                
+                return current.id;
+            });
+            
+            index = ids.indexOf(id);
+            
+            if(index !== -1){
+                data.allItems[type].splice(index,1);
+            }
               
         },
         
@@ -140,11 +150,11 @@ var UIController = (function(){
             // Create HTML string with placeholder text
             if(type === 'inc'){
                 element = DOMStrings.incomeContainer;
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             else if(type === 'exp'){
                 element = DOMStrings.expensesContainer;
-                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
             
             // Replace the placeholder text with some actual data
@@ -250,17 +260,17 @@ var controller = (function(budgetCtrl,UICtrl){
     
     var ctrlDeleteItem = function(event){
        
-        var itemId,spiltId,ID;
+        var itemID,spiltId,type,ID;
         
-        itemId = (event.target.parentNode.parentNode.parentNode.parentNode.id);
+        itemID = (event.target.parentNode.parentNode.parentNode.parentNode.id);
         
         if(itemID){
-            spiltId = itemId.spilt('-');
+            spiltId = itemID.split('-');
             type = spiltId[0];
-            ID = spiltId[1];
+            ID = parseInt(spiltId[1]);
             
             // 1.delete the item from data structure
-            
+            budgetCtrl.deleteItem(type,ID);
             
             // 2.Delete the item from the UI
             
